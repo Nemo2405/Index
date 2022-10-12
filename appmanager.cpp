@@ -1,6 +1,7 @@
 #include "appmanager.h"
 
 AppManager *AppManager::_appMgr = 0;
+//AppTemplate *AppTemplate::_app = 0;
 
 
 AppManager *AppManager::getAppMgr()
@@ -14,18 +15,50 @@ AppManager *AppManager::getAppMgr()
 AppManager::AppManager()
 {
     std::cout << "init App Dispatcher..." << std::endl;
+    weather = static_cast<WeatherApp*>(AppTemplate::createApp("WeatherApp"));
+    weather->init();
+    music = static_cast<MusicApp*>(AppTemplate::createApp("Music App"));
+//    weather->hello();
+//    weather->foo();
 }
 
-AppTemplate *AppTemplate::getApp()
+////template <typename T>
+//AppTemplate *AppTemplate::getApp()
+//{
+//    return _app;
+//}
+
+AppTemplate *AppTemplate::createApp(QString name)
 {
-    if (!_app) {
-        _app = new AppTemplate();
-    }
-    return _app;
+    return new AppTemplate(name);
 }
 
-void AppTemplate::initApp(QString name)
+void AppTemplate::hello()
 {
-    this->_appName = name;
-    std::cout << "init App --- " << name.toStdString() << " --- " << std::endl;
+    std::cout  << "hello "<< _appName.toStdString() << std::endl;
 }
+
+
+void WeatherApp::foo()
+{
+    std::cout  << "foo "<< _appName.toStdString() << std::endl;
+
+}
+
+void WeatherApp::init()
+{
+    std::cout << "init pro " << std::endl;
+}
+
+AppTemplate::AppTemplate(QString name) :
+    _appName(name)
+{
+    std::cout << "App   --- " << _appName.toStdString() << " ---" << std::endl;
+}
+
+void AppTemplate::init()
+{
+    std::cout << "init base " << _appName.toStdString() << " ..." << std::endl;
+}
+
+

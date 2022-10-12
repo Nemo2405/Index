@@ -32,6 +32,7 @@ protected:
 
 private:
     QString _appName;
+
 };
 
 #endif // APPMANAGER_H

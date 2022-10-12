@@ -25,10 +25,10 @@ private:
 
 
 
-//template <class C>
+template <class C>
 class AppTemplate {
 public:
-   static AppTemplate *createApp(QString name);
+   static C *createApp(QString name);
    void hello();
 protected:
     AppTemplate(QString name);
@@ -36,21 +36,18 @@ protected:
     //AppTemplate operator=(const AppTemplate&) = delete;
     const QString _appName;
     //static AppTemplate *_app;
-
-    virtual void init();
 private:
 };
 
 
 
-class WeatherApp : public AppTemplate{
+class WeatherApp : public AppTemplate<WeatherApp>{
 public:
-    void foo();
-    virtual void init() override;
+    void init(double lat, double lon);
 private:
 };
 
-class MusicApp : public AppTemplate {
+class MusicApp : public AppTemplate<MusicApp> {
 
 };
 

@@ -1,12 +1,9 @@
 #ifndef APPMANAGER_H
 #define APPMANAGER_H
-#include <iostream>
-#include <QString>
-#include <string>
 
-inline void log(QString logData) {
-    std::cout << logData.toStdString() << std::endl;
-}
+#include <global.h>
+#include <QProcess>
+
 
 template <class C>
 class AppTemplate;
@@ -25,46 +22,54 @@ private:
 
     static AppManager *_appMgr;
 
-//    QVector <AppTemplate*> a;
     WeatherApp *weather;
     MusicApp *music;
 };
 
 
 
-template <class C>
-class AppTemplate {
+//template <class C>
+//class AppTemplate {
+//public:
+//   static C *createApp(QString name);
+//   void hello();
+//   void setIsInit(bool newIsInit);
+
+//protected:
+//    AppTemplate(QString name);
+//    AppTemplate(const AppTemplate& root) = delete;
+//    const QString _appName;
+//    bool _isInit;
+//private:
+//};
+
+
+
+//class WeatherApp : public AppTemplate<WeatherApp>{
+//public:
+//    bool init(double lat, double lon, QString api);
+
+//private:
+//    double latitude;
+//    double longitude;
+//    char *apiKey;
+//};
+
+class BaseApp //: public QObject
+{
 public:
-   static C *createApp(QString name);
-   void hello();
-   void setIsInit(bool newIsInit);
+    BaseApp(QString appName, QString appPath);
+    void start();
 
 protected:
-    AppTemplate(QString name);
-    AppTemplate(const AppTemplate& root) = delete;
-    //AppTemplate operator=(const AppTemplate&) = delete;
     const QString _appName;
-    bool _isInit;
-    //static AppTemplate *_app;
-private:
+    const QString _appPath;
+    bool init();
 };
 
-
-
-class WeatherApp : public AppTemplate<WeatherApp>{
+class HeliosApp : public BaseApp {
 public:
-    bool init(double lat, double lon, QString api);
-//    void setApiKey(const QString &newApiKey);
-
-private:
-    //QString apiKey;
-    double latitude;
-    double longitude;
-    char *apiKey;
-};
-
-class MusicApp : public AppTemplate<MusicApp> {
-
+    HeliosApp(QString appName, QString appPath);
 };
 
 #endif // APPMANAGER_H

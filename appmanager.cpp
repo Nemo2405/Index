@@ -13,51 +13,76 @@ AppManager *AppManager::getAppMgr()
 }
 
 
-template<class C>
-C *AppTemplate<C>::createApp(QString name)
-{
-    return static_cast<C*>(new AppTemplate(name));
-}
-
-//template<>
-//WeatherApp *AppTemplate<WeatherApp>::createApp(QString name)
+//template<class C>
+//C *AppTemplate<C>::createApp(QString name)
 //{
-//    WeatherApp *res = static_cast<WeatherApp*>(new AppTemplate(name));
-//    //res->setApiKey("asd");
-//    return res;
+//    return static_cast<C*>(new AppTemplate(name));
 //}
 
-template<class C>
-void AppTemplate<C>::hello()
-{
-    log("hello " + _appName);
-}
+//template<class C>
+//void AppTemplate<C>::hello()
+//{
+//    Index::log("hello " + _appName);
+//}
 
-template<class C>
-AppTemplate<C>::AppTemplate(QString name) : _appName(name), _isInit(false)
-{
-    log ("App   --- " + _appName + " ---");
-}
+//template<class C>
+//AppTemplate<C>::AppTemplate(QString name) : _appName(name), _isInit(false)
+//{
+//    Index::log ("App   --- " + _appName + " ---");
+//}
 
-template<class C>
-void AppTemplate<C>::setIsInit(bool newIsInit)
-{
-    _isInit = newIsInit;
-}
+//template<class C>
+//void AppTemplate<C>::setIsInit(bool newIsInit)
+//{
+//    _isInit = newIsInit;
+//}
 
 
 AppManager::AppManager()
 {
-//    std::cout << "init App Dispatcher..." << std::endl;
-    log ("init App Dispatcher...");
-    weather = WeatherApp::createApp("Weather App");
-    music = MusicApp::createApp("Music App");
+    Index::log ("init App Dispatcher...");
+    HeliosApp helios("Helios", "/home/eddyneshton/QT_PROJECTS/_INDEX/index/microApps/Helios");
+    helios.start();
 
-    weather->setIsInit(weather->init(21, 12, "ff428cee7af79fdf5be359b2ac8b17a9"));
+
+//    weather = WeatherApp::createApp("Weather App");
+//    weather->setIsInit(weather->init(21, 12, "ff428cee7af79fdf5be359b2ac8b17a9"));
+
+    //music = MusicApp::createApp("Music App");
+}
+
+
+BaseApp::BaseApp(QString appName, QString appPath) :
+    _appName(appName), _appPath(appPath)
+{
 
 }
 
-//void WeatherApp::setApiKey(const QString &newApiKey)
-//{
-//    apiKey = newApiKey;
-//}
+void BaseApp::start()
+{
+    Index::log("init " + this->_appName + "...");
+    if (this->init()) {
+        Index::log("success\n");
+        return;
+    }
+    Index::log("error while init " + this->_appName + "\n");
+}
+
+bool BaseApp::init()
+{
+    QProcess initProcess;
+    initProcess.start(_appPath);
+    initProcess.waitForFinished();
+    QString output(initProcess.readAllStandardOutput());
+//    QString output1(initProcess.readAllStandardError()); //////????????????????????????? WHY ERROR
+//    Index::log("12313" + output);
+    if (output.trimmed() == "ok") {
+        return true;
+    }
+    return false;
+}
+
+HeliosApp::HeliosApp(QString appName, QString appPath) :
+    BaseApp(appName, appPath)
+{}
+

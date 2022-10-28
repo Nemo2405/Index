@@ -12,12 +12,12 @@ Mind *Mind::getMind()
 
 void Mind::start()
 {
-    std::cout << "starting mind..." << std::endl;
+    Index::log("starting mind...");
 }
 
 Mind::Mind()
 {
-    std::cout << "init index core..." << std::endl;
+    Index::log("init index core...");
     appMgr = AppManager::getAppMgr();
 
 }

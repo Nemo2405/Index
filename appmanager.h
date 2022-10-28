@@ -1,19 +1,50 @@
 #ifndef APPMANAGER_H
 #define APPMANAGER_H
 
-#include <global.h>
+//#include <global.h>
 #include <QProcess>
+#include <QMap>
+#include <a_helios.h>
+#include <QObject>
+
+class AppManager;
+
+class IBaseApp : public QObject {
+public:
+    virtual void __init(AppManager&) = 0;
+    bool isInit = false;
+private:
+};
 
 
-template <class C>
-class AppTemplate;
-class WeatherApp;
-class MusicApp;
+class WeatherApp : public IBaseApp/*BaseApp<Helios>*/ {
+public:
+    virtual void __init(AppManager&) override;
+    void getCurrentWeather(double lat, double lon);
+    void get5DayForecast(double lat, double lon);
+    WeatherApp()  {
+        _helios = new Helios;
+    }
+private:
+    Helios *_helios;
+};
 
-class AppManager
+class AppWrapper {
+public:
+    void add(QString appName, IBaseApp* app);
+    template<typename T>
+    T* get(QString key);
+private:
+    QMap <QString, IBaseApp*> _wrapper;
+};
+
+class AppManager : public QObject
 {
+    Q_OBJECT
 public:
     static AppManager* getAppMgr();
+    template<typename T>
+    void setAppInit(QString appName, bool isInit);
 
 private:
     AppManager();
@@ -22,54 +53,7 @@ private:
 
     static AppManager *_appMgr;
 
-    WeatherApp *weather;
-    MusicApp *music;
-};
-
-
-
-//template <class C>
-//class AppTemplate {
-//public:
-//   static C *createApp(QString name);
-//   void hello();
-//   void setIsInit(bool newIsInit);
-
-//protected:
-//    AppTemplate(QString name);
-//    AppTemplate(const AppTemplate& root) = delete;
-//    const QString _appName;
-//    bool _isInit;
-//private:
-//};
-
-
-
-//class WeatherApp : public AppTemplate<WeatherApp>{
-//public:
-//    bool init(double lat, double lon, QString api);
-
-//private:
-//    double latitude;
-//    double longitude;
-//    char *apiKey;
-//};
-
-class BaseApp //: public QObject
-{
-public:
-    BaseApp(QString appName, QString appPath);
-    void start();
-
-protected:
-    const QString _appName;
-    const QString _appPath;
-    bool init();
-};
-
-class HeliosApp : public BaseApp {
-public:
-    HeliosApp(QString appName, QString appPath);
+    AppWrapper appWrapper;
 };
 
 #endif // APPMANAGER_H
